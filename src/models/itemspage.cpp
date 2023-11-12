@@ -44,6 +44,11 @@ int ItemsPage::pageCount() const
     return m_pages.size();
 }
 
+QString ItemsPage::item(int page, int pos)
+{
+    return m_pages.at(page).at(pos);
+}
+
 QStringList ItemsPage::items(int page)
 {
     return m_pages.at(page);

@@ -128,6 +128,8 @@ Control {
                         sourceComponent: Rectangle {
                             color: "transparent"
 
+                            property var grids: gridViewContainer
+
                             KSortFilterProxyModel {
                                 id: proxyModel
                                 sourceModel: MultipageProxyModel
@@ -149,6 +151,11 @@ Control {
                                 focus: true
                                 activeGridViewFocusOnTab: gridViewLoader.SwipeView.isCurrentItem
                                 delegate: IconItemDelegate {
+                                    dndEnabled: true
+                                    dndParent: dropArea
+                                    Drag.mimeData: {
+                                        "application/x-dde-launcher-dnd-fullscreen": ("0," + modelData + "," + index) // "folder,page,index"
+                                    }
                                     iconSource: "image://app-icon/" + iconName
                                     width: gridViewContainer.cellSize
                                     height: gridViewContainer.cellSize
@@ -235,6 +242,135 @@ Control {
             }
         }
     }
+
+    DropArea {
+        id: dropArea
+
+        z: 2
+        anchors.fill: parent
+
+        property var targetItem: undefined // reference of the target object which is under cursor while dragging is happening
+        property var lastOperation: undefined // -1: prepend, 0: folder, 1: append
+
+        onPositionChanged: {
+            let curGridView = pages.currentItem.item.grids
+            let curPoint = curGridView.mapFromItem(dropArea, drag.x, drag.y)
+            let curItem = curGridView.itemAt(curPoint.x, curPoint.y)
+            if (curItem) {
+                let itemX = curGridView.mapFromItem(curItem.parent, curItem.x, curItem.y).x
+                let itemWidth = curItem.width
+                let sideOpPadding = itemWidth / 4
+                let op = 0
+                if (curPoint.x < (itemX + sideOpPadding)) {
+                    op = -1
+                } else if (curPoint.x > (itemX + curItem.width - sideOpPadding)) {
+                    op = 1
+                }
+                let draggedItemInfo = drag.source.Drag.mimeData["application/x-dde-launcher-dnd-fullscreen"]
+                let targetItemInfo = curItem.Drag.mimeData["application/x-dde-launcher-dnd-fullscreen"]
+
+                console.log(curItem.x, curItem.y, curItem.width, curItem.height, targetItemInfo, "~~~", draggedItemInfo, "~~~")
+                if (targetItem !== curItem || op !== lastOperation) {
+                    console.log("targetItemInfo", targetItemInfo)
+                    targetItem = curItem
+                    lastOperation = op
+                    dropDelay.restart()
+                }
+            } else {
+                targetItem = undefined
+                lastOperation = undefined
+            }
+
+            console.log(containsDrag, "fff", drag.x, drag.y)
+        }
+
+        onDropped: {
+            // do drop
+
+
+            targetItem = undefined
+            lastOperation = undefined
+        }
+
+        onExited: {
+            targetItem = undefined
+            lastOperation = undefined
+        }
+
+        Timer {
+            id: dropDelay
+            interval: 1000
+            onTriggered: {
+                if (dropArea.targetItem) {
+                    // do swap
+                    let draggedItemInfo = dropArea.drag.source.Drag.mimeData["application/x-dde-launcher-dnd-fullscreen"]
+                    let targetItemInfo = dropArea.targetItem.Drag.mimeData["application/x-dde-launcher-dnd-fullscreen"]
+                    MultipageProxyModel.commitOperation(draggedItemInfo, targetItemInfo, dropArea.lastOperation)
+                }
+            }
+        }
+    }
+
+//    MouseArea {
+//        id: dndMouseArea
+
+//        property var currentItem: undefined
+
+//        z: 9
+//        anchors.fill: parent
+//        propagateComposedEvents: true
+//        pressAndHoldInterval: 200
+
+//        onPressed: {
+//            console.log(pages.currentItem.item.grids, "yy")
+//            mouse.accepted = false
+//        }
+
+//        onPressAndHold: {
+//            console.log(pages.currentItem.item, "yy")
+//            // do not handle DnD events for searching...
+//            if (searchResultGridViewContainer.visible) {
+//                console.log("visible, quit")
+//                mouse.accepted = false
+//                return
+//            }
+
+//            let curGridView = pages.currentItem.item.grids
+//            let curPoint = curGridView.mapFromItem(dndMouseArea, mouse.x, mouse.y)
+//            let curItem = curGridView.itemAt(curPoint.x, curPoint.y)
+
+//            if (curItem) {
+//                console.log("aaaaaaa", dndMouseArea.mouseX)
+//                currentItem = curItem
+//                curItem.dndManager = dndMouseArea
+//            } else {
+//                console.log("else", mouse.x, mouse.y, curItem)
+//                mouse.accepted = false
+//            }
+//        }
+
+//        onReleased: {
+//            if (currentItem) {
+//                currentItem.dndManager = undefined
+//                currentItem = undefined
+//            }
+//        }
+//    }
+
+//    DrawerFolder {
+//        anchors.fill: parent
+//        contentItem: Rectangle {
+//            width: 200
+//            height: 200
+//            color: "transparent"
+//            border.color: "red"
+
+//            Text {
+//                anchors.centerIn: parent
+//                text: "test"
+//            }
+//        }
+//    }
 
     Popup {
         id: folderGridViewPopup

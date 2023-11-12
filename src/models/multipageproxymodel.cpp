@@ -27,6 +27,34 @@ int MultipageProxyModel::pageCount(int folderId) const
     return m_folders.value(fullId)->pageCount();
 }
 
+void MultipageProxyModel::commitOperation(const QString & drag, const QString & target, int operation)
+{
+    beginResetModel();
+
+    qDebug() << drag << target << operation << "action!!!";
+    const QStringList dragData = drag.split(',');
+    const QStringList targetData = target.split(',');
+    if (operation == 0) {
+        // put `drag` into `target` folder, or create a folder contains `drag` and `target`
+        if (dragData[0] == 0 && m_topLevel->item(dragData[1].toInt(), dragData[2].toInt()).startsWith("internal/folders/")) {
+            // cannot drag a folder onto something. do nothing.
+        } else if (targetData[0] == 0 && m_topLevel->item(targetData[1].toInt(), targetData[2].toInt()).startsWith("internal/folders/")) {
+            // drop into an existing folder
+        } else {
+            // create a folder and add the two items into the folder
+        }
+    } else {
+        // we only support same-folder move for now
+        Q_ASSERT(dragData[0] == targetData[0]);
+        int folder = dragData[0].toInt();
+        QString id("internal/folders/" + dragData[0]);
+        ItemsPage * page = folder == 0 ? m_topLevel : m_folders[id];
+        page->moveItem(dragData[1].toInt(), dragData[2].toInt(), targetData[1].toInt(), targetData[2].toInt() + (operation == -1 ? -1 : 0));
+    }
+
+    endResetModel();
+}
+
 QModelIndex MultipageProxyModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (row >= sourceModel()->rowCount()) {

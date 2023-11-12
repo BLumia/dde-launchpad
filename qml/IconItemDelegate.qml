@@ -20,7 +20,29 @@ Control {
 
     property string iconSource
 
+    property bool dndEnabled: false
+    property var dndParent: parent
+
     Accessible.name: iconItemLabel.text
+
+    Behavior on scale {
+        NumberAnimation { duration: 400; easing.type: Easing.OutBack }
+    }
+
+    Drag.active: dragHandler.active
+
+    states: State {
+        name: "dragged";
+        when: dragHandler.active
+        PropertyChanges {
+            target: root
+            parent: dndParent
+            x: x
+            y: y
+            z: 10
+            scale: 0.8
+        }
+    }
 
     signal folderClicked()
     signal itemClicked()
@@ -139,6 +161,11 @@ Control {
 
     HoverHandler {
         id: stylus
+    }
+
+    DragHandler {
+        id: dragHandler
+        enabled: root.dndEnabled
     }
 
     Keys.onSpacePressed: {

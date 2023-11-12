@@ -26,6 +26,7 @@ public:
     int maxItemCountPerPage() const;
 
     int pageCount() const;
+    QString item(int page, int pos);
     QStringList items(int page = 0);
     QStringList firstNItems(int count = 4);
 

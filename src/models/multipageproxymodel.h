@@ -30,6 +30,7 @@ public:
     ~MultipageProxyModel();
 
     Q_INVOKABLE int pageCount(int folderId = 0) const;
+    Q_INVOKABLE void commitOperation(const QString & drag, const QString & target, int operation);
 
     // QAbstractItemModel interface
 public:
