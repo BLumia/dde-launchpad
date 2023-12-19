@@ -10,3 +10,6 @@
 
 # User project file
 CMakeLists.txt.user*
+
+# Nix build
+result
