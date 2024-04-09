@@ -14,6 +14,8 @@ import "."
 Control {
     id: control
 
+    property Item keyTabTarget
+
     onFocusChanged: () => {
         frequentlyUsedView.focus = true
     }
@@ -36,6 +38,7 @@ Control {
             id: frequentlyUsedView
             visible: count > 0
             maxCount: recentlyInstalledView.visible ? 12 : 16
+            keyTabTarget: control.keyTabTarget
         }
 
         RecentlyInstalledView {

@@ -93,9 +93,11 @@ Item {
 
                 Loader {
                     id: appGridLoader
+                    property Item keyTabTarget: appList
                     Component {
                         id: analysisViewCom
                         AnalysisView {
+                            keyTabTarget: appGridLoader.keyTabTarget
                         }
                     }
                     Component {

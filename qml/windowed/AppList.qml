@@ -18,6 +18,10 @@ ColumnLayout {
 
     signal freeSortViewFolderClicked(string folderId, string folderName)
 
+    onFocusChanged: () => {
+        loader.item.focus = true
+    }
+
     function positionViewAtBeginning() {
         loader.item.positionViewAtBeginning()
     }

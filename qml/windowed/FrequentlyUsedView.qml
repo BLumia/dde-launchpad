@@ -18,6 +18,7 @@ Control {
         frequentlyUsedViewContainer.focus = true
     }
 
+    property Item keyTabTarget
     property int count: frequentlyUsedViewContainer.count
     property int maxCount: 16
 
@@ -36,6 +37,7 @@ Control {
         GridViewContainer {
             id: frequentlyUsedViewContainer
 
+            KeyNavigation.tab: control.keyTabTarget
             Layout.alignment: Qt.AlignRight
             Layout.topMargin: 10
             Layout.preferredHeight: frequentlyUsedViewContainer.height

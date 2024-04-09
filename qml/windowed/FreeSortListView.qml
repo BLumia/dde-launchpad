@@ -15,6 +15,10 @@ Item {
 
     signal folderClicked(string folderId, string folderName)
 
+    onFocusChanged: () => {
+        listView.focus = true
+    }
+
     function positionViewAtBeginning() {
         listView.positionViewAtBeginning()
     }
