@@ -7,6 +7,8 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import org.deepin.dtk 1.0
 
+import org.deepin.ds 1.0
+
 import org.deepin.launchpad 1.0
 import org.deepin.launchpad.models 1.0
 import "."
@@ -31,10 +33,14 @@ Control {
 
         FrequentlyUsedProxyModel {
             id: freqUsedModel
-            sourceModel: AppsModel
-            desktopIdRole: AppItem.DesktopIdRole
-            launchedTimesRole: AppItem.LaunchedTimesRole
-            lastLaunchedTimeRole: AppItem.LastLaunchedTimeRole
+            // sourceModel: AppsModel
+            // desktopIdRole: AppItem.DesktopIdRole
+            // launchedTimesRole: AppItem.LaunchedTimesRole
+            // lastLaunchedTimeRole: AppItem.LastLaunchedTimeRole
+            sourceModel: Applet.applicationsModel
+            desktopIdRole: Applet.applicationsModel.RoleNames.role("desktopId")
+            launchedTimesRole: Applet.applicationsModel.RoleNames.role("launchedTimes")
+            lastLaunchedTimeRole: Applet.applicationsModel.RoleNames.role("lastLaunchedTime")
         }
 
         FrequentlyUsedView {
@@ -48,9 +54,9 @@ Control {
         RecentlyInstalledView {
             id: recentlyInstalledView
             model: RecentlyInstalledProxyModel {
-                sourceModel: AppsModel
-                installedTimeRole: AppItem.InstalledTimeRole
-                lastLaunchedTimeRole: AppItem.LastLaunchedTimeRole
+                sourceModel: Applet.applicationsModel // AppsModel
+                installedTimeRole: Applet.applicationsModel.RoleNames.role("installedTime") // AppItem.InstalledTimeRole
+                lastLaunchedTimeRole: Applet.applicationsModel.RoleNames.role("lastLaunchedTime") // AppItem.LastLaunchedTimeRole
             }
             visible: count > 0
             Layout.topMargin: -(Helper.frequentlyUsed.cellPaddingRows / 2)

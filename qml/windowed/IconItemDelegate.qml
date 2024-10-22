@@ -13,7 +13,7 @@ import org.deepin.launchpad 1.0
 Control {
     id: root
 
-    property string text: display.startsWith("internal/category/") ? getCategoryName(display.substring(18)) : display
+    property string text: name.startsWith("internal/category/") ? getCategoryName(name.substring(18)) : name
 
     property string iconSource
     property bool dndEnabled: false

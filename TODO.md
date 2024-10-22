@@ -1,0 +1,4 @@
+- [ ] icon provider 可以扬了
+- [ ] dde-shell-wrapper 可以扬了，但里面的图标资源需要移动到合适的位置
+- [ ] launcheritem dbus 注册失败的情况需要考虑
+- [ ] 收藏功能移除（待确定）

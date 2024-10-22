@@ -7,6 +7,8 @@ find_package(DDEShell REQUIRED)
 add_library(shell-launcherapplet SHARED
     launcheritem.cpp
     launcheritem.h
+    ddeappsmodelproxy.cpp
+    ddeappsmodelproxy.h
 )
 
 target_link_libraries(shell-launcherapplet PRIVATE
